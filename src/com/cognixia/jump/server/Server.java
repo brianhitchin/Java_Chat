@@ -9,6 +9,7 @@ import com.cognixia.jump.client.ClientHandler;
 public class Server {
 
 	private ServerSocket serverSocket;
+
 	
 	public Server(ServerSocket serverSocket) {
 		
@@ -59,7 +60,9 @@ public class Server {
 	public static void main(String[] args) throws IOException {
 		
 		ServerSocket serverSocket = new ServerSocket(1234);
+		System.out.println(serverSocket.getInetAddress());
 		Server server = new Server(serverSocket);
+		System.out.println("JUMP Chat Server is running...");
 		server.startServer();
 		
 	}
