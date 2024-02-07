@@ -113,12 +113,12 @@ public class Client {
 	
 	
 	
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException{
     	Scanner scanner =new Scanner(System.in);
     	System.out.println("ENter your username for the groupchat:");
     	String username=scanner.nextLine();
     	Socket socket = new Socket("localhost", 123);
-    	Client client new Client(socket,username);
+    	Client client= new Client(socket,username);
     	client.listenMessage();
     	client.sendMessage();
     	
