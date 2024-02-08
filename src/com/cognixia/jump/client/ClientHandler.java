@@ -1,7 +1,11 @@
 package com.cognixia.jump.client;
 
+import com.cognixia.jump.server.Server;
+
 import java.io.*;
+import java.net.InetAddress;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,17 +23,21 @@ public class ClientHandler implements Runnable{
 
     private String clientUsername;
 
-    public ClientHandler(Socket socket){
+    // Need to keep reference to server to communicate with the menu
+    private Server server;
+
+    public ClientHandler(Socket socket, Server server){
 
         try {
             this.socket = socket;
             this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             this.clientUsername = bufferedReader.readLine();
+            this.server = server;
             clientHandlers.add(this);
 
             broadcastMessage("SERVER: " + clientUsername + " has entered the chat!");
-            writeToLogs("**SERVER: " + clientUsername + " has entered the chat!**");
+            writeToLogs("SERVER: " + clientUsername + " has entered the chat!**");
         }
         catch (IOException e) {
             closeEverything(socket, bufferedReader, bufferedWriter);
@@ -39,19 +47,25 @@ public class ClientHandler implements Runnable{
 
     @Override
     public void run() {
-
-        String messageFromClient;
-
-        while (socket.isConnected()){
-            try {
+        try {
+            String messageFromClient;
+            while (socket.isConnected()) {
                 messageFromClient = bufferedReader.readLine();
+                if (messageFromClient == null) {
+                    break; // Connection closed by client
+                }
                 broadcastMessage(messageFromClient);
                 writeToLogs(messageFromClient);
-
             }
-            catch (IOException e){
-                closeEverything(socket, bufferedReader, bufferedWriter);
-                break;
+        } catch (IOException e) {
+            // Exception occurred, close everything
+            closeEverything(socket, bufferedReader, bufferedWriter);
+        }
+        finally {
+            try {
+                server.removeClientHandler(this);
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
             }
         }
     }
@@ -71,17 +85,19 @@ public class ClientHandler implements Runnable{
         }
     }
 
-    public void removeClientHandler() {
+    public void removeClientHandler() throws UnknownHostException {
 
         clientHandlers.remove(this);
         broadcastMessage("SERVER: " + clientUsername + " has left the chat!");
-        writeToLogs("**SERVER: " + clientUsername + " has left the chat!**");
+        writeToLogs("SERVER: " + clientUsername + " has left the chat!**");
 
     }
 
-    public void closeEverything(Socket socket, BufferedReader bufferedReader, BufferedWriter bufferedWriter){
-        removeClientHandler();
+    public void closeEverything(Socket socket, BufferedReader bufferedReader, BufferedWriter bufferedWriter) {
+
         try {
+            removeClientHandler();
+
             if(bufferedReader != null){
                 bufferedReader.close();
             }
@@ -95,14 +111,6 @@ public class ClientHandler implements Runnable{
         catch (IOException e){
             e.printStackTrace();
         }
-    }
-
-    public void displayCurrentServerStatus(){
-        System.out.println("#=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=#");
-        System.out.println("# Jump Chat Server: RUNNING");
-        System.out.println("# IP Address: + ");
-
-        System.out.println("#=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=#");
     }
 
     public void writeToLogs(String msg) {
