@@ -1,6 +1,7 @@
 package com.cognixia.jump.server;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -60,7 +61,8 @@ public class Server {
 	public static void main(String[] args) throws IOException {
 		
 		ServerSocket serverSocket = new ServerSocket(1234);
-		System.out.println(serverSocket.getInetAddress());
+		InetAddress IP = serverSocket.getInetAddress();
+		System.out.println(IP.getHostAddress());
 		Server server = new Server(serverSocket);
 		System.out.println("JUMP Chat Server is running...");
 		server.startServer();

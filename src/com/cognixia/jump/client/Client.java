@@ -120,19 +120,38 @@ public class Client  {
 	
     public static void main(String[] args) throws IOException{
     	Scanner scanner =new Scanner(System.in);
-		System.out.println("Welcome to JumpChat!");
-    	System.out.println("Enter your username for the group chat:");
-    	String username=scanner.nextLine();
-		System.out.println("Enter the ip of the server");
-		String ip = scanner.nextLine();
-    	Socket socket = new Socket(ip, 1234);
-    	Client client= new Client(socket,username);
-
-		// Entered Jump chat room
-		System.out.println("You've entered the JumpChat room. Press /exit to exit.");
-
-    	client.listenMessage();
-    	client.sendMessage();
-    	
+    	System.out.println("+ ======================================================== +");
+		System.out.println("|                    Welcome to JumpChat!                  |");
+		System.out.println("|                                                          |");
+		System.out.println("|                    1. CONNECT TO SERVER                  |");
+		System.out.println("|                          2. EXIT                         |");
+		System.out.println("+ ======================================================== +");
+		
+		int resp = Integer.parseInt(scanner.nextLine());
+		
+		if (resp == 1) {
+			System.out.println("+ ======================================================== +");
+	    	System.out.println("|           Enter your username for the group chat:        |");
+	    	System.out.println("+ ======================================================== +");
+	    	String username=scanner.nextLine();
+			System.out.println("+ ======================================================== +");
+	    	System.out.println("|              Enter the IP address of the server:         |");
+	    	System.out.println("+ ======================================================== +");
+			String ip = scanner.nextLine();
+	    	Socket socket = new Socket(ip, 1234);
+	    	Client client= new Client(socket,username);
+	
+			// Entered Jump chat room
+	    	System.out.println("+ ======================================================== +");
+			System.out.println("|              You've entered the JumpChat room.           |");
+			System.out.println("|       Press /exit to exit or start sending messages!     |");
+			System.out.println("+ ======================================================== +");
+	
+	    	client.listenMessage();
+	    	client.sendMessage();
+		} else {
+			System.out.println("Good bye!");
+			System.exit(0);
+		}
 
     }}
