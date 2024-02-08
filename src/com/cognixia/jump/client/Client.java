@@ -10,7 +10,7 @@ import java.net.UnknownHostException;
 import java.util.Scanner;
 
 
-public class Client {
+public class Client  {
 
 	
 	private Socket socket;
@@ -18,9 +18,7 @@ public class Client {
 	private BufferedWriter bufferedWriter;
 	private String username;
 	
-	
-	
-	
+
 	public Client(Socket socket, String username) {
 		
 		try {
@@ -44,8 +42,14 @@ public class Client {
 			
 			Scanner  scanner =new Scanner(System.in);
 			while(socket.isConnected()) {
-				
-			String messageTosend= scanner.nextLine();
+
+			String messageTosend = scanner.nextLine();
+
+			if(messageTosend.equals("/exit")){
+				closeEverything(socket, bufferedReader, bufferedWriter);
+				return;
+			}
+
 			bufferedWriter.write(username+": " + messageTosend);
 			bufferedWriter.newLine();
 			bufferedWriter.flush();
@@ -114,12 +118,19 @@ public class Client {
 	
 	
 	
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws IOException{
     	Scanner scanner =new Scanner(System.in);
-    	System.out.println("ENter your username for the groupchat:");
+		System.out.println("Welcome to JumpChat!");
+    	System.out.println("Enter your username for the group chat:");
     	String username=scanner.nextLine();
-    	Socket socket = new Socket("localhost", 123);
-    	Client client = new Client(socket,username);
+		System.out.println("Enter the ip of the server");
+		String ip = scanner.nextLine();
+    	Socket socket = new Socket(ip, 1234);
+    	Client client= new Client(socket,username);
+
+		// Entered Jump chat room
+		System.out.println("You've entered the JumpChat room. Press /exit to exit.");
+
     	client.listenMessage();
     	client.sendMessage();
     	
