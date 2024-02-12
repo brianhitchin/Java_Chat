@@ -44,29 +44,39 @@ public class Client  {
 			while(socket.isConnected()) {
 
 			String messageTosend = scanner.nextLine();
-
-			if(messageTosend.equals("/exit")){
-				closeEverything(socket, bufferedReader, bufferedWriter);
-				return;
-			}
-
-			bufferedWriter.write(username+": " + messageTosend);
+			if (messageTosend.equals("/exit")) {
+                closeEverything(socket, bufferedReader, bufferedWriter);
+                return;
+            }
+			else if (messageTosend.startsWith("@")) {
+				
+				String[] parts = messageTosend.split(":", 2);
+                String recipient = parts[0].substring(1).trim();
+                String msg = parts[1].trim();
+                bufferedWriter.write("@" + recipient + ":" + msg);
+                
+                
+            } 
+			else {
+                bufferedWriter.write(username + ": " + messageTosend); // Normal message
+            }
 			bufferedWriter.newLine();
 			bufferedWriter.flush();
-			}
 			
-			
-			
-			
-			
-		}catch(IOException e){
-			closeEverything(socket,bufferedReader,bufferedWriter);
-			
+	
 		}
 			
+			
+			
+		}
+	catch(IOException e){
+			closeEverything(socket,bufferedReader,bufferedWriter);
+			
+		}}
+			
 		
 		
-	}
+	
 	
 	
 	
@@ -115,7 +125,7 @@ public class Client  {
 	
 	}
 	}
-	
+
 	
 	
     public static void main(String[] args) throws IOException{
@@ -144,6 +154,9 @@ public class Client  {
 			// Entered Jump chat room
 	    	System.out.println("+ ======================================================== +");
 			System.out.println("|              You've entered the JumpChat room.           |");
+			System.out.println("|                                                          |");
+			System.out.println("|       Private messaging Please type '@username:message'  |");
+			System.out.println("|                                                          |");
 			System.out.println("|       Press /exit to exit or start sending messages!     |");
 			System.out.println("+ ======================================================== +");
 	
@@ -153,5 +166,4 @@ public class Client  {
 			System.out.println("Good bye!");
 			System.exit(0);
 		}
-
     }}
