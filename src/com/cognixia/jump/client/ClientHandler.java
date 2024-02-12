@@ -9,12 +9,14 @@ import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 public class ClientHandler implements Runnable{
 
     // Keep track of each client
     public static ArrayList<ClientHandler> clientHandlers = new ArrayList<>();
-
+    
+    private static HashMap<String, ClientHandler>Privateusername = new HashMap<>();
     // connection between client and server
     private Socket socket;
 
@@ -35,27 +37,65 @@ public class ClientHandler implements Runnable{
             this.clientUsername = bufferedReader.readLine();
             this.server = server;
             clientHandlers.add(this);
-
+            Privateusername.put(clientUsername,this);
             broadcastMessage("SERVER: " + clientUsername + " has entered the chat!");
             writeToLogs("SERVER: " + clientUsername + " has entered the chat!**");
         }
         catch (IOException e) {
             closeEverything(socket, bufferedReader, bufferedWriter);
         }
-
+    }
+    
+    
+    
+    public void sendPrivateMessage(String recipient, String msg) {
+    
+    	
+        ClientHandler privateHandler = Privateusername.get(recipient);
+        if (privateHandler != null) {
+        	
+            try {
+            	privateHandler.bufferedWriter.write(clientUsername + "(private): " + msg);
+            	privateHandler.bufferedWriter.newLine();
+            	privateHandler.bufferedWriter.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            try {
+                bufferedWriter.write("SERVER: Private message to " + recipient + " failed. User not found.");
+                bufferedWriter.newLine();
+                bufferedWriter.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
     public void run() {
         try {
+       
             String messageFromClient;
             while (socket.isConnected()) {
                 messageFromClient = bufferedReader.readLine();
                 if (messageFromClient == null) {
                     break; // Connection closed by client
                 }
+                
+                else if (messageFromClient.startsWith("@")) {
+                    String[] parts = messageFromClient.split(":", 2);
+                    String recipient = parts[0].substring(1).trim();
+                    String message = parts[1].trim();
+                    sendPrivateMessage(recipient, message);
+   
+                
+                
+                }
+                
+                else {
                 broadcastMessage(messageFromClient);
-                writeToLogs(messageFromClient);
+                writeToLogs(messageFromClient);}
             }
         } catch (IOException e) {
             // Exception occurred, close everything
@@ -70,6 +110,8 @@ public class ClientHandler implements Runnable{
         }
     }
 
+    
+    
     public void broadcastMessage(String msg){
         for(ClientHandler clientHandler : clientHandlers){
             try{
@@ -84,10 +126,12 @@ public class ClientHandler implements Runnable{
             }
         }
     }
-
+    
     public void removeClientHandler() throws UnknownHostException {
 
         clientHandlers.remove(this);
+      
+      
         broadcastMessage("SERVER: " + clientUsername + " has left the chat!");
         writeToLogs("SERVER: " + clientUsername + " has left the chat!**");
 
@@ -183,3 +227,4 @@ public class ClientHandler implements Runnable{
         return null;
     }
 }
+
