@@ -25,10 +25,32 @@ public class JavaFx_GUI extends Application {
     private TextField  passwordField;
     private Client client;
 
+    
+    
+    private Socket socket;
+    private String username;
+    private String ip;
+    
+    
+    
+    
+    public JavaFx_GUI(Socket socket, String username,String ip) {
+        this.socket = socket;
+        this.username = username;
+        this.ip =ip;
+    }
+    
+    
     @Override
     public void start(Stage primaryStage) {
         BorderPane root = new BorderPane();
-       
+        try {
+            Socket socket = new Socket(ip, 1234); 
+            client = new Client(socket, username); 
+        } catch (IOException e) {
+                e.printStackTrace();
+                // Handle connection error
+            }
         
 ///********************CHAt Area**********************************************************
         // Chat area
@@ -47,8 +69,8 @@ public class JavaFx_GUI extends Application {
 
         Button sendButton = new Button("Send");
         Button ExitButton = new Button("End Chat");
-       // sendButton.setOnAction(event -> sendMessageGUI());
-      //  ExitButton.setOnAction(event -> closeEverything());
+       sendButton.setOnAction(event -> sendMessageGUI());
+      // ExitButton.setOnAction(event -> client.closeEverything());
         
         
         messageInputArea.getChildren().addAll(messageField, sendButton,ExitButton);
@@ -70,9 +92,9 @@ public class JavaFx_GUI extends Application {
         	
         
             // Send message to the client
-        	// client.sendMessage(message);
+        	 client.sendMessage();
             // Optionally, append the message to the chat area
-            //appendMessage("You: " + message);
+            appendMessage("You: " + message);
             
             // Clear the message field after sending
             messageField.clear();

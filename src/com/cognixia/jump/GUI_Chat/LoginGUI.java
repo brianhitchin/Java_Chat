@@ -3,6 +3,8 @@ package com.cognixia.jump.GUI_Chat;
 import java.io.IOException;
 import java.net.Socket;
 
+import com.cognixia.jump.client.Client;
+
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -17,7 +19,13 @@ public class LoginGUI extends Application {
 
     private TextField usernameField;
     private TextField passwordField;
-
+    private TextField IPField;
+   
+    
+    
+    
+    
+    
     @Override
     public void start(Stage primaryStage) {
         BorderPane root = new BorderPane();
@@ -31,8 +39,12 @@ public class LoginGUI extends Application {
 
         passwordField = new TextField();
         passwordField.setPromptText("Password");
+        
+        
+        IPField = new TextField();
+        IPField.setPromptText("IP Server");
 
-        loginArea.getChildren().addAll(usernameField, passwordField);
+        loginArea.getChildren().addAll(usernameField, passwordField,IPField);
         root.setCenter(loginArea);
 
         Button loginButton = new Button("Login");
@@ -51,10 +63,30 @@ public class LoginGUI extends Application {
     }
 
     private void login() {
+    	try {
         // Handle login logic here
         String username = usernameField.getText();
         String password = passwordField.getText();
+        String IPserver = IPField.getText();
         // Perform authentication, socket connection, etc.
+        
+        Socket socket = new Socket(IPserver, 1234);
+        Client client =new Client(socket, username);
+        
+        
+        //JavaFx_GUI chatGUI = new JavaFx_GUI();
+      //  chatGUI.start(new Stage());
+        
+    	}
+    catch (IOException e) {
+        e.printStackTrace();
+        // Handle connection error
+    }
+        
+        
+        
+        
+        
     }
 
     public static void main(String[] args) {

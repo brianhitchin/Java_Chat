@@ -28,6 +28,12 @@ public class Client  {
 			
 			this.username=username;
 			
+			
+			//wendy
+			bufferedWriter.write(username);
+	        bufferedWriter.newLine();
+	        bufferedWriter.flush();
+			
 		}catch(IOException e)
 		{
 			closeEverything(socket,bufferedReader,bufferedWriter);
