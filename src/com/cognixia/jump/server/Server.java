@@ -13,7 +13,11 @@ import com.cognixia.jump.client.ClientHandler;
 public class Server {
 
 	private ServerSocket serverSocket;
-
+	
+	public static final String ANSI_RESET = "\u001B[0m";
+	public static final String ANSI_YELLOW = "\u001B[33m";
+	public static final String ANSI_BLUE = "\u001B[34m";
+			
 	// Keep track of each clientHandler
 	private ArrayList<ClientHandler> clientHandlers;
 
@@ -83,12 +87,12 @@ public class Server {
 
 	public void displayCurrentServerStatus(String status) throws UnknownHostException {
 
-		System.out.println("+ ======================================================== +");
-		System.out.println("|                  Jump Chat Server: " + status + "               |");
-		System.out.println("|                  IP Address: " + InetAddress.getLocalHost().getHostAddress() + "               |");
-		System.out.println("|                          Port: " + 1234 + "                      |");
-		System.out.println("|                      Number of users: " + this.clientHandlers.size() + "                  |");
-		System.out.println("+ ======================================================== +");
+		System.out.println(ANSI_YELLOW + "+ ======================================================== +" + ANSI_RESET);
+		System.out.println(ANSI_BLUE + "|                  Jump Chat Server: " + status + "               |" + ANSI_RESET);
+		System.out.println(ANSI_BLUE + "|                  IP Address: " + InetAddress.getLocalHost().getHostAddress() + "               |" + ANSI_RESET);
+		System.out.println(ANSI_BLUE + "|                          Port: " + 1234 + "                      |" + ANSI_RESET);
+		System.out.println(ANSI_BLUE + "|                      Number of users: " + this.clientHandlers.size() + "                  |" + ANSI_RESET);
+		System.out.println(ANSI_YELLOW + "+ ======================================================== +" + ANSI_RESET);
 
 	}
 

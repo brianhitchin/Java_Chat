@@ -22,7 +22,12 @@ public class Client  {
 	private BufferedWriter bufferedWriter;
 	private String username;
 
-
+	public static final String ANSI_RESET = "\u001B[0m";
+	public static final String ANSI_RED = "\u001B[31m";
+	public static final String ANSI_GREEN = "\u001B[32m";
+	public static final String ANSI_YELLOW = "\u001B[33m";
+	public static final String ANSI_BLUE = "\u001b[38;2;145;231;255m";
+	
 	public Client(Socket socket, String username) {
 
 		try {
@@ -234,13 +239,13 @@ public class Client  {
 
 		// Menu
 		while(true) {
-			System.out.println("+ ======================================================== +");
-			System.out.println("|                    Welcome to JumpChat!                  |");
-			System.out.println("|                                                          |");
-			System.out.println("|                    1. CREATE AN ACCOUNT                  |");
-			System.out.println("|                    2. CONNECT TO SERVER                  |");
-			System.out.println("|                          3. EXIT                         |");
-			System.out.println("+ ======================================================== +");
+			System.out.println(ANSI_YELLOW + "+ ======================================================== +" + ANSI_RESET);
+			System.out.println(ANSI_BLUE + "|                    Welcome to JumpChat!                  |" + ANSI_RESET);
+			System.out.println(ANSI_BLUE + "|                                                          |" + ANSI_RESET);
+			System.out.println(ANSI_BLUE + "|                    1. CREATE AN ACCOUNT                  |" + ANSI_RESET);
+			System.out.println(ANSI_BLUE + "|                    2. CONNECT TO SERVER                  |" + ANSI_RESET);
+			System.out.println(ANSI_BLUE + "|                          3. EXIT                         |" + ANSI_RESET);
+			System.out.println(ANSI_YELLOW + "+ ======================================================== +" + ANSI_RESET);
 
 			String resp = scanner.nextLine();
 
@@ -249,20 +254,20 @@ public class Client  {
 				String username;
 				boolean exit = false;
 
-				System.out.println("+ ======================================================== +");
-				System.out.println("|          Enter your username for JUMP Chat App:          |");
-				System.out.println("+ ======================================================== +");
+				System.out.println(ANSI_YELLOW + "+ ======================================================== +" + ANSI_RESET);
+				System.out.println(ANSI_BLUE + "|          Enter your username for JUMP Chat App:          |" + ANSI_RESET);
+				System.out.println(ANSI_YELLOW + "+ ======================================================== +" + ANSI_RESET);
 				username = scanner.nextLine();
 
 				// need to add username restrictions
 
 				// Check if username already exists
 				while(doesUsernameExist(username, connection) || username.startsWith("/")) {
-					System.out.println("+ ======================================================== +");
-					System.out.println("|         This username already exists or is invalid       |");
-					System.out.println("|          Enter another username for JUMP Chat App        |");
-					System.out.println("|          		     Enter \"/exit\" to cancel               |");
-					System.out.println("+ ======================================================== +");
+					System.out.println(ANSI_RED + "+ ======================================================== +" + ANSI_RESET);
+					System.out.println(ANSI_RED + "|         This username already exists or is invalid       |" + ANSI_RESET);
+					System.out.println(ANSI_RED + "|          Enter another username for JUMP Chat App        |" + ANSI_RESET);
+					System.out.println(ANSI_RED + "|          		     Enter \"/exit\" to cancel               |" + ANSI_RESET);
+					System.out.println(ANSI_RED + "+ ======================================================== +" + ANSI_RESET);
 					username = scanner.nextLine();
 
 					if(username.equals("/exit")){
@@ -279,16 +284,16 @@ public class Client  {
 					do {
 
 						if(!passwordConfirm.equals(password)){
-							System.out.println("+ ======================================================== +");
-							System.out.println("|          Passwords do not match. Please try again        |");
-							System.out.println("|          		     Enter \"/exit\" to cancel               |");
-							System.out.println("+ ======================================================== +");
+							System.out.println(ANSI_RED + "+ ======================================================== +" + ANSI_RESET);
+							System.out.println(ANSI_RED + "|          Passwords do not match. Please try again        |" + ANSI_RESET);
+							System.out.println(ANSI_RED + "|          		     Enter \"/exit\" to cancel               |" + ANSI_RESET);
+							System.out.println(ANSI_RED + "+ ======================================================== +" + ANSI_RESET);
 							System.out.println();
 						}
 
-						System.out.println("+ ======================================================== +");
-						System.out.println("|           Enter your password for JUMP Chat Login:       |");
-						System.out.println("+ ======================================================== +");
+						System.out.println(ANSI_YELLOW + "+ ======================================================== +" + ANSI_RESET);
+						System.out.println(ANSI_BLUE + "|           Enter your password for JUMP Chat Login:       |" + ANSI_RESET);
+						System.out.println(ANSI_YELLOW + "+ ======================================================== +" + ANSI_RESET);
 						password = scanner.nextLine();
 
 						if(password.equals("/exit")){
@@ -296,9 +301,9 @@ public class Client  {
 							break;
 						}
 
-                        System.out.println("+ ======================================================== +");
-                        System.out.println("|         Confirm your password for JUMP Chat Login:       |");
-                        System.out.println("+ ======================================================== +");
+                        System.out.println(ANSI_YELLOW + "+ ======================================================== +" + ANSI_RESET);
+                        System.out.println(ANSI_BLUE + "|         Confirm your password for JUMP Chat Login:       |" + ANSI_RESET);
+                        System.out.println(ANSI_YELLOW + "+ ======================================================== +" + ANSI_RESET);
                         passwordConfirm = scanner.nextLine();
 
                         if(passwordConfirm.equals("/exit")){
@@ -316,28 +321,28 @@ public class Client  {
 						boolean created = createUser(username, encryptedPassword, connection);
 
 						if(created){
-							System.out.println("+ ======================================================== +");
-							System.out.println("|                  User successfully created               |");
-							System.out.println("+ ======================================================== +");
+							System.out.println(ANSI_GREEN + "+ ======================================================== +" + ANSI_RESET);
+							System.out.println(ANSI_GREEN + "|                  User successfully created               |" + ANSI_RESET);
+							System.out.println(ANSI_GREEN + "+ ======================================================== +" + ANSI_RESET);
 						}
 						else{
-							System.out.println("+ ======================================================== +");
-							System.out.println("|                     Error creating user                  |");
-							System.out.println("+ ======================================================== +");
+							System.out.println(ANSI_RED + "+ ======================================================== +" + ANSI_RESET);
+							System.out.println(ANSI_RED + "|                     Error creating user                  |" + ANSI_RESET);
+							System.out.println(ANSI_RED + "+ ======================================================== +" + ANSI_RESET);
 						}
 					}
 				}
 			}
 			else if (Objects.equals(resp, "2")) {
 
-				System.out.println("+ ======================================================== +");
-				System.out.println("|          Enter your username for JUMP Chat Login:        |");
-				System.out.println("+ ======================================================== +");
+				System.out.println(ANSI_YELLOW + "+ ======================================================== +" + ANSI_RESET);
+				System.out.println(ANSI_BLUE + "|          Enter your username for JUMP Chat Login:        |" + ANSI_RESET);
+				System.out.println(ANSI_YELLOW + "+ ======================================================== +" + ANSI_RESET);
 				String username = scanner.nextLine();
 
-				System.out.println("+ ======================================================== +");
-				System.out.println("|           Enter your password for JUMP Chat Login:       |");
-				System.out.println("+ ======================================================== +");
+				System.out.println(ANSI_YELLOW + "+ ======================================================== +" + ANSI_RESET);
+				System.out.println(ANSI_BLUE + "|           Enter your password for JUMP Chat Login:       |" + ANSI_RESET);
+				System.out.println(ANSI_YELLOW + "+ ======================================================== +" + ANSI_RESET);
 				String password = scanner.nextLine();
 
 				// Encrypt password
@@ -349,10 +354,10 @@ public class Client  {
 				if(authenticated) {
 
 					while(true) {
-						System.out.println("+ ======================================================== +");
-						System.out.println("|                User Successfully Authenticated.          |");
-						System.out.println("|              Enter the IP address of the server:         |");
-						System.out.println("+ ======================================================== +");
+						System.out.println(ANSI_GREEN + "+ ======================================================== +" + ANSI_RESET);
+						System.out.println(ANSI_GREEN + "|                User Successfully Authenticated.          |" + ANSI_RESET);
+						System.out.println(ANSI_GREEN + "|              Enter the IP address of the server:         |" + ANSI_RESET);
+						System.out.println(ANSI_GREEN + "+ ======================================================== +" + ANSI_RESET);
 						String ip = scanner.nextLine();
 
 						try {
@@ -360,31 +365,31 @@ public class Client  {
 							Client client = new Client(socket, username);
 
 							// Entered Jump chat room
-							System.out.println("+ ======================================================== +");
-							System.out.println("|              You've entered the JumpChat room.           |");
-							System.out.println("|       Press /exit to exit or start sending messages!     |");
-							System.out.println("+ ======================================================== +");
+							System.out.println(ANSI_YELLOW + "+ ======================================================== +" + ANSI_RESET);
+							System.out.println(ANSI_BLUE + "|              You've entered the JumpChat room.           |" + ANSI_RESET);
+							System.out.println(ANSI_BLUE + "|       Press /exit to exit or start sending messages!     |" + ANSI_RESET);
+							System.out.println(ANSI_YELLOW + "+ ======================================================== +" + ANSI_RESET);
 
 							client.listenMessage();
 							client.sendMessage();
 
 						} catch (IOException e) {
 
-							System.out.println("+ ======================================================== +");
-							System.out.println("|          			  Invalid IP address.                  |");
-							System.out.println("+ ======================================================== +");
+							System.out.println(ANSI_RED + "+ ======================================================== +" + ANSI_RESET);
+							System.out.println(ANSI_RED + "|          			  Invalid IP address.                  |" + ANSI_RESET);
+							System.out.println(ANSI_RED + "+ ======================================================== +" + ANSI_RESET);
 
 						}
 					}
 				}else{
-					System.out.println("+ ======================================================== +");
-					System.out.println("|          Authentication Failed. Please try again.        |");
-					System.out.println("+ ======================================================== +");
+					System.out.println(ANSI_RED + "+ ======================================================== +" + ANSI_RESET);
+					System.out.println(ANSI_RED + "|          Authentication Failed. Please try again.        |" + ANSI_RESET);
+					System.out.println(ANSI_RED + "+ ======================================================== +" + ANSI_RESET);
 				}
 			} else if(Objects.equals(resp, "3")) {
-				System.out.println("+ ======================================================== +");
-				System.out.println("|          	            ~ Goodbye! ~                       |");
-				System.out.println("+ ======================================================== +");
+				System.out.println(ANSI_YELLOW + "+ ======================================================== +" + ANSI_RESET);
+				System.out.println(ANSI_BLUE + "|          	            ~ Goodbye! ~                       |" + ANSI_RESET);
+				System.out.println(ANSI_YELLOW + "+ ======================================================== +" + ANSI_RESET);
 				connection.close();
 				System.exit(0);
 			}
