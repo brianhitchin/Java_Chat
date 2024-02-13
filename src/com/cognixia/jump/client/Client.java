@@ -263,11 +263,11 @@ public class Client  {
 
 				// Check if username already exists
 				while(doesUsernameExist(username, connection) || username.startsWith("/")) {
-					System.out.println(ANSI_RED + "+ ======================================================== +" + ANSI_RESET);
+					System.out.println(ANSI_YELLOW + "+ ======================================================== +" + ANSI_RESET);
 					System.out.println(ANSI_RED + "|         This username already exists or is invalid       |" + ANSI_RESET);
 					System.out.println(ANSI_RED + "|          Enter another username for JUMP Chat App        |" + ANSI_RESET);
 					System.out.println(ANSI_RED + "|          		     Enter \"/exit\" to cancel               |" + ANSI_RESET);
-					System.out.println(ANSI_RED + "+ ======================================================== +" + ANSI_RESET);
+					System.out.println(ANSI_YELLOW + "+ ======================================================== +" + ANSI_RESET);
 					username = scanner.nextLine();
 
 					if(username.equals("/exit")){
@@ -284,10 +284,10 @@ public class Client  {
 					do {
 
 						if(!passwordConfirm.equals(password)){
-							System.out.println(ANSI_RED + "+ ======================================================== +" + ANSI_RESET);
+							System.out.println(ANSI_YELLOW + "+ ======================================================== +" + ANSI_RESET);
 							System.out.println(ANSI_RED + "|          Passwords do not match. Please try again        |" + ANSI_RESET);
 							System.out.println(ANSI_RED + "|          		     Enter \"/exit\" to cancel               |" + ANSI_RESET);
-							System.out.println(ANSI_RED + "+ ======================================================== +" + ANSI_RESET);
+							System.out.println(ANSI_YELLOW + "+ ======================================================== +" + ANSI_RESET);
 							System.out.println();
 						}
 
@@ -321,14 +321,14 @@ public class Client  {
 						boolean created = createUser(username, encryptedPassword, connection);
 
 						if(created){
-							System.out.println(ANSI_GREEN + "+ ======================================================== +" + ANSI_RESET);
+							System.out.println(ANSI_YELLOW + "+ ======================================================== +" + ANSI_RESET);
 							System.out.println(ANSI_GREEN + "|                  User successfully created               |" + ANSI_RESET);
-							System.out.println(ANSI_GREEN + "+ ======================================================== +" + ANSI_RESET);
+							System.out.println(ANSI_YELLOW + "+ ======================================================== +" + ANSI_RESET);
 						}
 						else{
-							System.out.println(ANSI_RED + "+ ======================================================== +" + ANSI_RESET);
+							System.out.println(ANSI_YELLOW + "+ ======================================================== +" + ANSI_RESET);
 							System.out.println(ANSI_RED + "|                     Error creating user                  |" + ANSI_RESET);
-							System.out.println(ANSI_RED + "+ ======================================================== +" + ANSI_RESET);
+							System.out.println(ANSI_YELLOW + "+ ======================================================== +" + ANSI_RESET);
 						}
 					}
 				}
@@ -354,10 +354,10 @@ public class Client  {
 				if(authenticated) {
 
 					while(true) {
-						System.out.println(ANSI_GREEN + "+ ======================================================== +" + ANSI_RESET);
+						System.out.println(ANSI_YELLOW + "+ ======================================================== +" + ANSI_RESET);
 						System.out.println(ANSI_GREEN + "|                User Successfully Authenticated.          |" + ANSI_RESET);
 						System.out.println(ANSI_GREEN + "|              Enter the IP address of the server:         |" + ANSI_RESET);
-						System.out.println(ANSI_GREEN + "+ ======================================================== +" + ANSI_RESET);
+						System.out.println(ANSI_YELLOW + "+ ======================================================== +" + ANSI_RESET);
 						String ip = scanner.nextLine();
 
 						try {
@@ -375,16 +375,16 @@ public class Client  {
 
 						} catch (IOException e) {
 
-							System.out.println(ANSI_RED + "+ ======================================================== +" + ANSI_RESET);
+							System.out.println(ANSI_YELLOW + "+ ======================================================== +" + ANSI_RESET);
 							System.out.println(ANSI_RED + "|          			  Invalid IP address.                  |" + ANSI_RESET);
-							System.out.println(ANSI_RED + "+ ======================================================== +" + ANSI_RESET);
+							System.out.println(ANSI_YELLOW + "+ ======================================================== +" + ANSI_RESET);
 
 						}
 					}
 				}else{
-					System.out.println(ANSI_RED + "+ ======================================================== +" + ANSI_RESET);
+					System.out.println(ANSI_YELLOW + "+ ======================================================== +" + ANSI_RESET);
 					System.out.println(ANSI_RED + "|          Authentication Failed. Please try again.        |" + ANSI_RESET);
-					System.out.println(ANSI_RED + "+ ======================================================== +" + ANSI_RESET);
+					System.out.println(ANSI_YELLOW + "+ ======================================================== +" + ANSI_RESET);
 				}
 			} else if(Objects.equals(resp, "3")) {
 				System.out.println(ANSI_YELLOW + "+ ======================================================== +" + ANSI_RESET);
