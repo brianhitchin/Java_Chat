@@ -2,6 +2,8 @@ package com.cognixia.jump.GUI_Chat;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Scanner;
+
 import javafx.application.Application;
 import com.cognixia.jump.client.Client;
 
@@ -34,25 +36,20 @@ public class JavaFx_GUI extends Application {
     
     
     
-    public JavaFx_GUI(Socket socket, String username,String ip) {
+    public JavaFx_GUI(Socket socket, String username,String ip, Client client) {
         this.socket = socket;
         this.username = username;
         this.ip =ip;
+        this.client = client;
     }
     
     
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage primaryStage) throws IOException {
+
         BorderPane root = new BorderPane();
-        try {
-            Socket socket = new Socket(ip, 1234); 
-            client = new Client(socket, username); 
-        } catch (IOException e) {
-                e.printStackTrace();
-                // Handle connection error
-            }
-        
-///********************CHAt Area**********************************************************
+
+///********************chat Area**********************************************************
         // Chat area
         chatArea = new TextArea();
         chatArea.setEditable(false);
@@ -71,7 +68,7 @@ public class JavaFx_GUI extends Application {
         Button ExitButton = new Button("End Chat");
        sendButton.setOnAction(event -> sendMessageGUI());
       // ExitButton.setOnAction(event -> client.closeEverything());
-        
+        listenMessage();
         
         messageInputArea.getChildren().addAll(messageField, sendButton,ExitButton);
         root.setBottom(messageInputArea);
@@ -89,15 +86,67 @@ public class JavaFx_GUI extends Application {
     private void sendMessageGUI() {
         String message = messageField.getText();
         if (!message.isEmpty()) {
-        	
-        
-            // Send message to the client
-        	 client.sendMessage();
+
+            // Send message using the client
+            sendMessage(message);
+
             // Optionally, append the message to the chat area
-            appendMessage("You: " + message);
+            chatArea.appendText("You: " + message);
             
             // Clear the message field after sending
             messageField.clear();
+        }
+    }
+
+    public void listenMessage() {
+        new Thread(new Runnable() {
+
+            public void run() {
+
+                String msgFromGroupChat;
+                while(socket.isConnected()) {
+
+                    try {
+
+                        msgFromGroupChat= client.getBufferedReader().readLine();
+                        chatArea.appendText(msgFromGroupChat + "\n");
+
+
+                    }catch(IOException e){
+
+//                        closeEverything(socket,bufferedReader,bufferedWriter);
+                    }
+                }
+            }
+        }).start();
+    }
+
+    public void sendMessage(String msg)  {
+
+        try {
+            client.getBufferedWriter().write(username);
+            client.getBufferedWriter().newLine();
+            client.getBufferedWriter().flush();
+
+            while (socket.isConnected()) {
+
+                if (msg.startsWith("@")) {
+
+                    String[] parts = msg.split(":", 2);
+                    String recipient = parts[0].substring(1).trim();
+                    String pm = parts[1].trim();
+                    client.getBufferedWriter().write("@" + recipient + ":" + pm);
+
+
+                } else {
+                    client.getBufferedWriter().write(username + ": " + msg); // Normal message
+                }
+                client.getBufferedWriter().newLine();
+                client.getBufferedWriter().flush();
+            }
+        }
+        catch (IOException e){
+            System.err.println("Error Sending GUI Message");
         }
     }
 
@@ -107,5 +156,6 @@ public class JavaFx_GUI extends Application {
 
     public static void main(String[] args) {
         launch(args);
+        System.out.println("Does it end?");
     }
 }

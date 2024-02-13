@@ -64,18 +64,22 @@ public class LoginGUI extends Application {
 
     private void login() {
     	try {
-        // Handle login logic here
-        String username = usernameField.getText();
-        String password = passwordField.getText();
-        String IPserver = IPField.getText();
-        // Perform authentication, socket connection, etc.
-        
-        Socket socket = new Socket(IPserver, 1234);
-        Client client =new Client(socket, username);
-        
-        
-        //JavaFx_GUI chatGUI = new JavaFx_GUI();
-      //  chatGUI.start(new Stage());
+
+            System.out.println("Test");
+
+            // Handle login logic here
+            String username = usernameField.getText();
+            String password = passwordField.getText();
+            String IPserver = IPField.getText();
+
+            // Perform authentication, socket connection, etc.
+
+            Socket socket = new Socket(IPserver, 1234);
+            Client client =new Client(socket, username);
+
+            JavaFx_GUI chatGUI = new JavaFx_GUI(socket, username, IPserver, client);
+
+            chatGUI.start(new Stage());
         
     	}
     catch (IOException e) {
