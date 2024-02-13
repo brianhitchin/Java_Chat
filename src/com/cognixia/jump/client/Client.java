@@ -28,6 +28,15 @@ public class Client  {
 	public static final String ANSI_YELLOW = "\u001B[33m";
 	public static final String ANSI_BLUE = "\u001b[38;2;145;231;255m";
 
+	// Getters/setters
+	public BufferedWriter getBufferedWriter() {
+		return bufferedWriter;
+	}
+
+	public BufferedReader getBufferedReader() {
+		return bufferedReader;
+	}
+
 	public Client(Socket socket, String username) {
 
 		try {
