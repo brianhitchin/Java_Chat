@@ -57,6 +57,7 @@ public class JavaFx_GUI extends Application {
 
         // Message input area
         VBox messageInputArea = new VBox();
+
         messageInputArea.setPadding(new Insets(10));
         messageInputArea.setSpacing(10);
 
@@ -67,7 +68,7 @@ public class JavaFx_GUI extends Application {
         Button sendButton = new Button("Send");
         Button ExitButton = new Button("End Chat");
        sendButton.setOnAction(event -> sendMessageGUI());
-      // ExitButton.setOnAction(event -> client.closeEverything());
+//       ExitButton.setOnAction(event -> client.closeEverything());
         listenMessage();
         
         messageInputArea.getChildren().addAll(messageField, sendButton,ExitButton);
@@ -91,7 +92,7 @@ public class JavaFx_GUI extends Application {
             sendMessage(message);
 
             // Optionally, append the message to the chat area
-            chatArea.appendText("You: " + message);
+            chatArea.appendText("You: " + message + "\n");
             
             // Clear the message field after sending
             messageField.clear();
@@ -128,7 +129,7 @@ public class JavaFx_GUI extends Application {
             client.getBufferedWriter().newLine();
             client.getBufferedWriter().flush();
 
-            while (socket.isConnected()) {
+            if (socket.isConnected()) {
 
                 if (msg.startsWith("@")) {
 
