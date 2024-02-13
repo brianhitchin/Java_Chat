@@ -40,7 +40,7 @@ public class Client  {
 			bufferedWriter.newLine();
 			bufferedWriter.flush();
 			
-			Scanner  scanner =new Scanner(System.in);
+			Scanner scanner =new Scanner(System.in);
 			while(socket.isConnected()) {
 
 			String messageTosend = scanner.nextLine();

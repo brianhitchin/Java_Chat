@@ -6,7 +6,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-
+import java.util.Scanner;
 
 import com.cognixia.jump.client.ClientHandler;
 
@@ -35,7 +35,7 @@ public class Server {
 				clientHandlers.add(clientHandler);
 				Thread thread = new Thread(clientHandler);
 				thread.start();
-				displayCurrentServerStatus("Running");
+				
 			}
 
 		} catch (IOException e) {
