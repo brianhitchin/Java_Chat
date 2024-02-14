@@ -152,7 +152,7 @@ public class ClientHandler implements Runnable{
         }
     }
 
-    public void writeToLogs(String msg) {
+    public static void writeToLogs(String msg) {
 
         File file = new File("JumpChatLogs.txt");
 
@@ -167,20 +167,14 @@ public class ClientHandler implements Runnable{
                 }
             }
 
-            // This part is for testing purposes, Delete after -------
-//            fileWriter.write(msg + "\n");
-            // -------------------------------------------------------
-
-            // Encryption would go here
-//            byte[] c = msg.getBytes(StandardCharsets.UTF_16);
-//            fileWriter.write(Arrays.toString(c));
-//            fileWriter.write("\n");
+//             Encryption
             char[] encoded = msg.toCharArray();
 
             for(char c: encoded){
                 c += 34;
                 fileWriter.write(c);
             }
+
 
 
             fileWriter.write("\n");
@@ -190,35 +184,88 @@ public class ClientHandler implements Runnable{
         }
     }
 
-    public String ReadFromLogs() {
+    public static void ReadFromLogs(int lastLines) {
 
         File file = new File("JumpChatLogs.txt");
 
-        try(FileReader fileReader = new FileReader(file)){
+        if(!file.exists()){
 
-            // If file doesn't exist create one
-            if(!file.exists()){
+            // Log file does not exist
+            return;
+        }
 
-                System.err.println("Log file does not exist.");
-                return null;
+        try{
+            FileReader fileReader = new FileReader(file);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+
+            String line;
+
+            /*
+            // TODO
+                    Might look into RandomAccessFile later for better efficiency
+            */
+
+            int counter = 0;
+
+            String[] logs = new String[lastLines];
+
+            while((line = bufferedReader.readLine()) != null){
+
+                // Reset counter to zero once it reaches the max size we want to read
+                // This will reset the logs to only store the most recent messages
+                if(counter == lastLines - 1){
+
+                    counter = 0;
+                }
+                // store the logs first here
+                logs[counter] = line;
+                counter++;
+
             }
 
-            // Decryption would go here
-//            String line = null;
-//            for()
+            // Need to sort the log file
+            String[] sorted = new String[lastLines];
+
+            if(counter != 0)
+                counter -= 1;
+            for(int i = 0; i < logs.length; i++){
+
+                if(counter == lastLines - 1){
+                    counter = 0;
+                }
+
+                sorted[i] = logs[counter];
+                counter++;
+            }
+
+            // Decrypt Message from logs
+            for (String message : sorted) {
+
+                if(message == null){
+                    break;
+                }
+
+                char[] encoded = message.toCharArray();
+                StringBuilder stringBuilder = new StringBuilder();
+
+                for (char c : encoded) {
+                    c -= 34;
+                    stringBuilder.append(c);
+                }
+
+                // Print sb
+                System.out.println(stringBuilder);
+
+                //clear sb
+                stringBuilder.delete(0, stringBuilder.length());
 
 
 
-            // We can either print all logs here using loop or
-            // We can return an array of Strings with all the log lines
-            return "One";
+            }
 
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-        catch (IOException e){
-            e.printStackTrace();
-        }
-
-
-        return null;
     }
 }
