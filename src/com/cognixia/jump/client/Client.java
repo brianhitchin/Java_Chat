@@ -27,7 +27,16 @@ public class Client  {
 	public static final String ANSI_GREEN = "\u001B[32m";
 	public static final String ANSI_YELLOW = "\u001B[33m";
 	public static final String ANSI_BLUE = "\u001b[38;2;145;231;255m";
-	
+
+	// Getters/setters
+	public BufferedWriter getBufferedWriter() {
+		return bufferedWriter;
+	}
+
+	public BufferedReader getBufferedReader() {
+		return bufferedReader;
+	}
+
 	public Client(Socket socket, String username) {
 
 		try {
@@ -301,12 +310,12 @@ public class Client  {
 							break;
 						}
 
-                        System.out.println(ANSI_YELLOW + "+ ======================================================== +" + ANSI_RESET);
-                        System.out.println(ANSI_BLUE + "|         Confirm your password for JUMP Chat Login:       |" + ANSI_RESET);
-                        System.out.println(ANSI_YELLOW + "+ ======================================================== +" + ANSI_RESET);
-                        passwordConfirm = scanner.nextLine();
+						System.out.println(ANSI_YELLOW + "+ ======================================================== +" + ANSI_RESET);
+						System.out.println(ANSI_BLUE + "|         Confirm your password for JUMP Chat Login:       |" + ANSI_RESET);
+						System.out.println(ANSI_YELLOW + "+ ======================================================== +" + ANSI_RESET);
+						passwordConfirm = scanner.nextLine();
 
-                        if(passwordConfirm.equals("/exit")){
+						if(passwordConfirm.equals("/exit")){
 							exit = true;
 							break;
 						}
