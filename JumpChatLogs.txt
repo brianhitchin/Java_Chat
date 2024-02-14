@@ -1,38 +1,0 @@
-**SERVER: Cris has entered the chat!**
-**SERVER: Cris has left the chat!**
-**SERVER: Cris has entered the chat!**
-Cris: Hi Guys!
-Cris: Anyone here?
-**SERVER: Brian has entered the chat!**
-Brian: Hi Cris
-Cris: Yo
-Brian: This pretty fast
-Cris: ikr
-Brian: its like
-Cris: its in real time
-Brian: ikr
-**SERVER: Cris has left the chat!**
-**SERVER: Brian has left the chat!**
-**SERVER: cris has entered the chat!**
-[-2, -1, 0, 42, 0, 42, 0, 83, 0, 69, 0, 82, 0, 86, 0, 69, 0, 82, 0, 58, 0, 32, 0, 99, 0, 114, 0, 105, 0, 115, 0, 32, 0, 104, 0, 97, 0, 115, 0, 32, 0, 101, 0, 110, 0, 116, 0, 101, 0, 114, 0, 101, 0, 100, 0, 32, 0, 116, 0, 104, 0, 101, 0, 32, 0, 99, 0, 104, 0, 97, 0, 116, 0, 33, 0, 42, 0, 42]
-cris: fxblkxcfhbblbvkjxdbflkjbvd
-[-2, -1, 0, 99, 0, 114, 0, 105, 0, 115, 0, 58, 0, 32, 0, 102, 0, 120, 0, 98, 0, 108, 0, 107, 0, 120, 0, 99, 0, 102, 0, 104, 0, 98, 0, 98, 0, 108, 0, 98, 0, 118, 0, 107, 0, 106, 0, 120, 0, 100, 0, 98, 0, 102, 0, 108, 0, 107, 0, 106, 0, 98, 0, 118, 0, 100]
-cris: 2398 23 23
-[-2, -1, 0, 99, 0, 114, 0, 105, 0, 115, 0, 58, 0, 32, 0, 50, 0, 51, 0, 57, 0, 56, 0, 32, 0, 50, 0, 51, 0, 32, 0, 50, 0, 51]
-**SERVER: cris has left the chat!**
-[-2, -1, 0, 42, 0, 42, 0, 83, 0, 69, 0, 82, 0, 86, 0, 69, 0, 82, 0, 58, 0, 32, 0, 99, 0, 114, 0, 105, 0, 115, 0, 32, 0, 104, 0, 97, 0, 115, 0, 32, 0, 108, 0, 101, 0, 102, 0, 116, 0, 32, 0, 116, 0, 104, 0, 101, 0, 32, 0, 99, 0, 104, 0, 97, 0, 116, 0, 33, 0, 42, 0, 42]
-**SERVER: Cris has entered the chat!**
-++TFSWFS;!Dsjt!ibt!foufsfe!uif!dibu"++Cris: Hello?
-Dsjt;!Ifmmp@LLugtxgt\BBBBBCLL\B\B\BLLugtxgt\BdBBBBCLL
-LLugtxgt\BdBBBBCLL
-LLugtxgt\BdBBBBCLL
-LLugtxgt\BdBBBBCLL
-LLugtxgt\BdBBBBCLL
-LLugtxgt\BdBBBBCLL
-LLugtxgt\BdBBBBCLL
-LLugtxgt\BdBBBBCLL
-LLugtxgt\BdBBBBCLL
-LLugtxgt\BdBBBBCLL
-ugtxgt\BdBBBBCLL
-ugtxgt\BdBBBBCLL
-ugtxgt\BdBBBBCLL

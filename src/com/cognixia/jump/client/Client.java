@@ -1,11 +1,7 @@
 package com.cognixia.jump.client;
 import com.cognixia.jump.connection.ConnectionManager;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.BufferedReader;
+import java.io.*;
 import java.net.Socket;
 import java.sql.*;
 import java.util.Objects;
@@ -223,6 +219,8 @@ public class Client  {
 
 	}
 
+
+
 	public static void main(String[] args) throws IOException, SQLException, ClassNotFoundException {
 
 		Scanner scanner =new Scanner(System.in);
@@ -364,6 +362,9 @@ public class Client  {
 						System.out.println(ANSI_BLUE + "|              You've entered the JumpChat room.           |" + ANSI_RESET);
 						System.out.println(ANSI_BLUE + "|       Press /exit to exit or start sending messages!     |" + ANSI_RESET);
 						System.out.println(ANSI_YELLOW + "+ ======================================================== +" + ANSI_RESET);
+
+						// Read History from Logs
+						ClientHandler.ReadFromLogs(10);
 
 						client.listenMessage();
 						client.sendMessage();
