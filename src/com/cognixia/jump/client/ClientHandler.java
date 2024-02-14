@@ -57,7 +57,7 @@ public class ClientHandler implements Runnable{
             	privateHandler.bufferedWriter.newLine();
             	privateHandler.bufferedWriter.flush();
             } catch (IOException e) {
-                e.printStackTrace();
+                System.err.println("Error sending Private message");
             }
         } else {
             try {
@@ -65,7 +65,7 @@ public class ClientHandler implements Runnable{
                 bufferedWriter.newLine();
                 bufferedWriter.flush();
             } catch (IOException e) {
-                e.printStackTrace();
+                System.err.println("Error sending Private message");
             }
         }
     }
@@ -104,7 +104,7 @@ public class ClientHandler implements Runnable{
                 server.removeClientHandler(this);
                 removeClientHandler();
             } catch (UnknownHostException e) {
-                e.printStackTrace();
+                System.err.println("Error Removing client handler");
             }
         }
     }
