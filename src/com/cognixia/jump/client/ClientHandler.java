@@ -17,6 +17,7 @@ public class ClientHandler implements Runnable{
     public static ArrayList<ClientHandler> clientHandlers = new ArrayList<>();
     
     private static HashMap<String, ClientHandler>Privateusername = new HashMap<>();
+
     // connection between client and server
     private Socket socket;
 
@@ -45,12 +46,9 @@ public class ClientHandler implements Runnable{
             closeEverything(socket, bufferedReader, bufferedWriter);
         }
     }
-    
-    
-    
+
     public void sendPrivateMessage(String recipient, String msg) {
-    
-    	
+
         ClientHandler privateHandler = Privateusername.get(recipient);
         if (privateHandler != null) {
         	
@@ -104,14 +102,13 @@ public class ClientHandler implements Runnable{
         finally {
             try {
                 server.removeClientHandler(this);
+                removeClientHandler();
             } catch (UnknownHostException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    
-    
     public void broadcastMessage(String msg){
         for(ClientHandler clientHandler : clientHandlers){
             try{
@@ -130,8 +127,7 @@ public class ClientHandler implements Runnable{
     public void removeClientHandler() throws UnknownHostException {
 
         clientHandlers.remove(this);
-      
-      
+
         broadcastMessage("SERVER: " + clientUsername + " has left the chat!");
         writeToLogs("SERVER: " + clientUsername + " has left the chat!**");
 
@@ -140,7 +136,6 @@ public class ClientHandler implements Runnable{
     public void closeEverything(Socket socket, BufferedReader bufferedReader, BufferedWriter bufferedWriter) {
 
         try {
-            removeClientHandler();
 
             if(bufferedReader != null){
                 bufferedReader.close();
@@ -227,4 +222,3 @@ public class ClientHandler implements Runnable{
         return null;
     }
 }
-
