@@ -2,10 +2,7 @@ package com.cognixia.jump.GUI_Chat;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 import com.cognixia.jump.client.Client;
 
@@ -32,92 +29,107 @@ public class LoginGUI extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        BorderPane root = new BorderPane();
-
-        VBox loginArea = new VBox();
-        loginArea.setPadding(new Insets(10));
-        loginArea.setSpacing(10);
-
-        Label title = new Label("Welcome to JumpChat App!");
-        title.setStyle("-fx-font: 24 arial;");
-        VBox titleArea = new VBox();
-        titleArea.getChildren().add(title);
-        titleArea.setAlignment(Pos.CENTER);
-
-        usernameField = new TextField();
-        usernameField.setPromptText("Username");
-
-        passwordField = new TextField();
-        passwordField.setPromptText("Password");
-
-        IPField = new TextField();
-        IPField.setPromptText("IP Server");
-
-        Button loginButton = new Button("Login");
-        loginButton.setOnAction(event -> login(primaryStage));
-        VBox buttonArea = new VBox();
-        buttonArea.getChildren().add(loginButton);
-        buttonArea.setAlignment(Pos.CENTER);
-        BorderPane.setMargin(buttonArea, new Insets(0,0,350,0)); // Top margin to separate from loginArea
-        root.setBottom(buttonArea);
-
-        feedback = new Label();
-        VBox feedbackArea = new VBox();
-        feedbackArea.getChildren().add(feedback);
-        feedbackArea.setAlignment(Pos.CENTER);
-
-        loginArea.getChildren().addAll(titleArea, usernameField, passwordField,IPField, buttonArea, feedbackArea);
-        root.setCenter(loginArea);
-
-        Scene loginScene = new Scene(root, 600, 300);
-        primaryStage.setScene(loginScene);
-        primaryStage.setTitle("LOGIN");
-        primaryStage.show();
-    }
-
-    private void login(Stage primaryStage) {
 
         try {
-
-            // Handle login logic here
-            String username = usernameField.getText();
-            String password = passwordField.getText();
-            String IPserver = IPField.getText();
             Connection connection = ConnectionManager.getConnection();
 
-            // Perform authentication, socket connection, etc.
-            String encryptedPass = encoder(password);
+            BorderPane root = new BorderPane();
 
-            if(authenticate(username, encryptedPass, connection)){
+            VBox loginArea = new VBox();
+            loginArea.setPadding(new Insets(10));
+            loginArea.setSpacing(10);
 
-                try {
-                    Socket socket = new Socket(IPserver, 1234);
-                    Client client = new Client(socket, username);
+            Label title = new Label("Welcome to JumpChat App!");
+            title.setStyle("-fx-font: 24 arial;");
+            VBox titleArea = new VBox();
+            titleArea.getChildren().add(title);
+            titleArea.setAlignment(Pos.CENTER);
 
-                    JavaFx_GUI chatGUI = new JavaFx_GUI(socket, username, client);
+            usernameField = new TextField();
+            usernameField.setPromptText("Username");
 
-                    chatGUI.start(new Stage());
+            passwordField = new TextField();
+            passwordField.setPromptText("Password");
 
-                    primaryStage.hide();
+            IPField = new TextField();
+            IPField.setPromptText("IP Server");
+
+            Button loginButton = new Button("Login");
+            loginButton.setOnAction(event -> login(primaryStage, connection));
+            VBox loginButtonArea = new VBox();
+            loginButtonArea.getChildren().add(loginButton);
+            loginButtonArea.setAlignment(Pos.CENTER);
+
+            BorderPane.setMargin(loginButtonArea, new Insets(0, 0, 350, 0)); // Top margin to separate from loginArea
+            root.setBottom(loginButtonArea);
+
+            Button signupButton = new Button("Sign Up");
+            signupButton.setOnAction(event -> signUpTrigger(connection, primaryStage));
+            VBox signUpButtonArea = new VBox();
+            signUpButtonArea.getChildren().add(signupButton);
+            signUpButtonArea.setAlignment(Pos.CENTER);
+
+            BorderPane.setMargin(signUpButtonArea, new Insets(0, 0, 350, 0)); // Top margin to separate from loginArea
+            root.setBottom(signUpButtonArea);
+
+            feedback = new Label();
+            VBox feedbackArea = new VBox();
+            feedbackArea.getChildren().add(feedback);
+            feedbackArea.setAlignment(Pos.CENTER);
+
+            loginArea.getChildren().addAll(titleArea, usernameField, passwordField, IPField, loginButtonArea ,signUpButtonArea, feedbackArea);
+            root.setCenter(loginArea);
+
+            Scene loginScene = new Scene(root, 600, 300);
+            primaryStage.setScene(loginScene);
+            primaryStage.setTitle("LOGIN");
+            primaryStage.show();
+        }
+        catch (IOException | ClassNotFoundException | SQLException e){
+            System.err.println("Connection Error");
+        }
+    }
+
+    private void login(Stage primaryStage, Connection connection) {
+
+        // Handle login logic here
+        String username = usernameField.getText();
+        String password = passwordField.getText();
+        String IPserver = IPField.getText();
+
+        // Perform authentication, socket connection, etc.
+        String encryptedPass = encoder(password);
+
+        if(authenticate(username, encryptedPass, connection)){
+
+            try {
+                // Need to handle empty IP Address
+                if(IPserver.isEmpty()){
+                    throw new IOException();
                 }
-                catch (IOException e){
-                    System.err.println("Error connection to the server");
-                    feedback.setText("Invalid IP Address.");
-                    feedback.setTextFill(Color.RED);
-                }
+
+                Socket socket = new Socket(IPserver, 1234);
+                Client client = new Client(socket, username);
+
+                JavaFx_GUI chatGUI = new JavaFx_GUI(socket, username, client);
+
+                chatGUI.start(new Stage());
+
+                primaryStage.hide();
+
             }
-            else{
-                // Need to provide feedback to user if username/password does not match records of DB
-                feedback.setText("Invalid username or password.");
+            catch (IOException e){
+                System.err.println("Error connection to the server");
+                feedback.setText("Invalid IP Address.");
                 feedback.setTextFill(Color.RED);
             }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            // Handle connection error
-        } catch (ClassNotFoundException | SQLException e) {
-            throw new RuntimeException(e);
         }
+        else{
+            // Need to provide feedback to user if username/password does not match records of DB
+            feedback.setText("Invalid username or password.");
+            feedback.setTextFill(Color.RED);
+        }
+
     }
 
     public static boolean authenticate(String username, String encryptedPassword, Connection connection){
@@ -148,6 +160,15 @@ public class LoginGUI extends Application {
             System.err.println("Authentication Error");
             return false;
         }
+    }
+
+    public static void signUpTrigger(Connection connection, Stage stage){
+
+        SignUpGUI signUpGui = new SignUpGUI(connection, stage);
+
+        signUpGui.start(new Stage());
+
+        stage.hide();
     }
 
     public static String encoder(String password){

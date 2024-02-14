@@ -112,7 +112,7 @@ public class Client  {
 
 		}catch(IOException e) {
 
-			e.printStackTrace();
+			System.err.println("Error Executing SQL Statement");
 
 		}
 	}
@@ -140,7 +140,7 @@ public class Client  {
 			return false;
 		}
 		catch (SQLException e) {
-			e.printStackTrace();
+			System.err.println("Error Executing SQL Statement");
 			return true;
 		}
 	}
@@ -352,6 +352,10 @@ public class Client  {
 					String ip = scanner.nextLine();
 
 					try {
+						if(ip.isEmpty()){
+							throw new IOException();
+						}
+
 						Socket socket = new Socket(ip, 1234);
 						Client client = new Client(socket, username);
 

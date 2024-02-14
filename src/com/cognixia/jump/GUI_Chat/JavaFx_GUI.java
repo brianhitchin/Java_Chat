@@ -21,9 +21,9 @@ public class JavaFx_GUI extends Application {
 
     private TextArea chatArea;
     private TextField messageField;
-    private Client client;
-    private Socket socket;
-    private String username;
+    private final Client client;
+    private final Socket socket;
+    private final String username;
 
     // Constructor
     public JavaFx_GUI(Socket socket, String username, Client client) {
@@ -40,8 +40,7 @@ public class JavaFx_GUI extends Application {
 
         BorderPane root = new BorderPane();
 
-///********************chat Area**********************************************************
-        // Chat area
+        // Chat area ----------------------------------------
         chatArea = new TextArea();
         chatArea.setEditable(false);
         root.setCenter(chatArea);
@@ -54,7 +53,7 @@ public class JavaFx_GUI extends Application {
 
         messageField = new TextField();
         messageField.setPromptText("Type your message here...");
-       // messageField.setOnAction(event -> sendMessageGUI());
+        // messageField.setOnAction(event -> sendMessageGUI());
 
         Button sendButton = new Button("Send");
         Button ExitButton = new Button("End Chat");
