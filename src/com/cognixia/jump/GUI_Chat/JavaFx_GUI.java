@@ -2,7 +2,6 @@ package com.cognixia.jump.GUI_Chat;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.util.Scanner;
 
 import javafx.application.Application;
 import com.cognixia.jump.client.Client;
@@ -15,35 +14,27 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.FontSmoothingType;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 public class JavaFx_GUI extends Application {
 
     private TextArea chatArea;
-    private TextArea Writeusername;
     private TextField messageField;
-    private TextField  usernameField;
-    private TextField  passwordField;
     private Client client;
-
-    
-    
     private Socket socket;
     private String username;
-    private String ip;
-    
-    
-    
-    
-    public JavaFx_GUI(Socket socket, String username,String ip, Client client) {
+
+    // Constructor
+    public JavaFx_GUI(Socket socket, String username, Client client) {
         this.socket = socket;
         this.username = username;
-        this.ip =ip;
+
         this.client = client;
+//        bufferedReader = client.getBufferedReader();
+//        bufferedWriter = client.getBufferedWriter();
     }
-    
-    
+
     @Override
     public void start(Stage primaryStage) throws IOException {
 
@@ -67,21 +58,32 @@ public class JavaFx_GUI extends Application {
 
         Button sendButton = new Button("Send");
         Button ExitButton = new Button("End Chat");
-       sendButton.setOnAction(event -> sendMessageGUI());
-//       ExitButton.setOnAction(event -> client.closeEverything());
+        sendButton.setOnAction(event -> sendMessageGUI());
+        ExitButton.setOnAction(event -> exitButton(primaryStage));
         listenMessage();
-        
+        enterChat();
+
         messageInputArea.getChildren().addAll(messageField, sendButton,ExitButton);
         root.setBottom(messageInputArea);
-        
-        
 
         // Set up the scene and stage
         Scene scene = new Scene(root, 600, 400);
         primaryStage.setScene(scene);
         primaryStage.setTitle("JUMP CHAT");
-       
+
+        primaryStage.getScene().getWindow().addEventFilter(WindowEvent.WINDOW_CLOSE_REQUEST, this::closeApp);
         primaryStage.show();
+    }
+
+    private void exitButton(Stage primaryStage){
+        primaryStage.close();
+        client.closeEverything(socket, client.getBufferedReader(), client.getBufferedWriter());
+    }
+
+    private void closeApp(WindowEvent event) {
+
+        client.closeEverything(socket, client.getBufferedReader(), client.getBufferedWriter());
+
     }
 
     private void sendMessageGUI() {
@@ -99,36 +101,9 @@ public class JavaFx_GUI extends Application {
         }
     }
 
-    public void listenMessage() {
-        new Thread(new Runnable() {
-
-            public void run() {
-
-                String msgFromGroupChat;
-                while(socket.isConnected()) {
-
-                    try {
-
-                        msgFromGroupChat= client.getBufferedReader().readLine();
-                        chatArea.appendText(msgFromGroupChat + "\n");
-
-
-                    }catch(IOException e){
-
-//                        closeEverything(socket,bufferedReader,bufferedWriter);
-                    }
-                }
-            }
-        }).start();
-    }
-
     public void sendMessage(String msg)  {
 
         try {
-            client.getBufferedWriter().write(username);
-            client.getBufferedWriter().newLine();
-            client.getBufferedWriter().flush();
-
             if (socket.isConnected()) {
 
                 if (msg.startsWith("@")) {
@@ -139,7 +114,8 @@ public class JavaFx_GUI extends Application {
                     client.getBufferedWriter().write("@" + recipient + ":" + pm);
 
 
-                } else {
+                }
+                else {
                     client.getBufferedWriter().write(username + ": " + msg); // Normal message
                 }
                 client.getBufferedWriter().newLine();
@@ -147,16 +123,40 @@ public class JavaFx_GUI extends Application {
             }
         }
         catch (IOException e){
-            System.err.println("Error Sending GUI Message");
+            System.err.println("GUI: Error Sending Message");
         }
     }
 
-    private void appendMessage(String message) {
-        chatArea.appendText(message + "\n");
+    public void enterChat(){
+        try {
+                client.getBufferedWriter().write(username);
+                client.getBufferedWriter().newLine();
+                client.getBufferedWriter().flush();
+        }
+        catch (IOException e){
+            System.err.println("GUI: Error entering the chat");
+        }
     }
 
-    public static void main(String[] args) {
-        launch(args);
-        System.out.println("Does it end?");
+    public void listenMessage() {
+        new Thread(new Runnable() {
+
+            public void run() {
+
+                String msgFromGroupChat;
+
+                while(socket.isConnected() && !socket.isClosed()) {
+
+                    try {
+
+                        msgFromGroupChat = client.getBufferedReader().readLine();
+                        chatArea.appendText(msgFromGroupChat + "\n");
+
+                    }catch(IOException ignored){
+
+                    }
+                }
+            }
+        }).start();
     }
 }

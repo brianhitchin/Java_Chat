@@ -5,17 +5,13 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.OutputStream;
 import java.io.BufferedReader;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.sql.*;
 import java.util.Objects;
 import java.util.Scanner;
 
-
 public class Client  {
-
 
 	private Socket socket;
 	private BufferedReader bufferedReader;
@@ -51,7 +47,6 @@ public class Client  {
 			closeEverything(socket,bufferedReader,bufferedWriter);
 		}}
 
-
 	public void sendMessage() {
 		try {
 			bufferedWriter.write(username);
@@ -59,44 +54,36 @@ public class Client  {
 			bufferedWriter.flush();
 
 			Scanner  scanner =new Scanner(System.in);
-			while(socket.isConnected()) {
+			while(socket.isConnected() && !socket.isClosed()) {
 
-				String messageTosend = scanner.nextLine();
+				String messageToSend = scanner.nextLine();
 
-				if(messageTosend.equals("/exit")){
+				if (messageToSend.startsWith("@")) {
+
+					String[] parts = messageToSend.split(":", 2);
+					String recipient = parts[0].substring(1).trim();
+					String pm = parts[1].trim();
+					bufferedWriter.write("@" + recipient + ":" + pm);
+
+				}else if(messageToSend.equals("/exit")){
 					closeEverything(socket, bufferedReader, bufferedWriter);
 					return;
+				} else {
+					bufferedWriter.write(username + ": " + messageToSend); // Normal message
 				}
-
-				bufferedWriter.write(username+": " + messageTosend);
 				bufferedWriter.newLine();
 				bufferedWriter.flush();
 			}
-
-
-
-
-
-		}catch(IOException e){
-			closeEverything(socket,bufferedReader,bufferedWriter);
-
-		}
-
-
-
+		} catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
 	}
-
-
-
 
 	public void listenMessage() {
 		new Thread(new Runnable() {
 
 			public void run() {
 				String msgFromGroupChat;
-
-
-
 
 				while(socket.isConnected()) {
 					try {
@@ -111,20 +98,16 @@ public class Client  {
 		}).start();
 	}
 
-
-
-
 	public void closeEverything(Socket socket,BufferedReader bufferedReader, BufferedWriter bufferedWriter){
 		try {
-
-			if(bufferedReader !=null) {
-				bufferedReader.close();
+			if(socket !=null) {
+				socket.close();
 			}
 			if(bufferedWriter !=null) {
 				bufferedWriter.close();
 			}
-			if(socket !=null) {
-				socket.close();
+			if(bufferedReader !=null) {
+				bufferedReader.close();
 			}
 
 		}catch(IOException e) {
@@ -362,35 +345,34 @@ public class Client  {
 
 				if(authenticated) {
 
-					while(true) {
+					System.out.println(ANSI_YELLOW + "+ ======================================================== +" + ANSI_RESET);
+					System.out.println(ANSI_GREEN + "|                User Successfully Authenticated.          |" + ANSI_RESET);
+					System.out.println(ANSI_GREEN + "|              Enter the IP address of the server:         |" + ANSI_RESET);
+					System.out.println(ANSI_YELLOW + "+ ======================================================== +" + ANSI_RESET);
+					String ip = scanner.nextLine();
+
+					try {
+						Socket socket = new Socket(ip, 1234);
+						Client client = new Client(socket, username);
+
+						// Entered Jump chat room
 						System.out.println(ANSI_YELLOW + "+ ======================================================== +" + ANSI_RESET);
-						System.out.println(ANSI_GREEN + "|                User Successfully Authenticated.          |" + ANSI_RESET);
-						System.out.println(ANSI_GREEN + "|              Enter the IP address of the server:         |" + ANSI_RESET);
+						System.out.println(ANSI_BLUE + "|              You've entered the JumpChat room.           |" + ANSI_RESET);
+						System.out.println(ANSI_BLUE + "|       Press /exit to exit or start sending messages!     |" + ANSI_RESET);
 						System.out.println(ANSI_YELLOW + "+ ======================================================== +" + ANSI_RESET);
-						String ip = scanner.nextLine();
 
-						try {
-							Socket socket = new Socket(ip, 1234);
-							Client client = new Client(socket, username);
+						client.listenMessage();
+						client.sendMessage();
 
-							// Entered Jump chat room
-							System.out.println(ANSI_YELLOW + "+ ======================================================== +" + ANSI_RESET);
-							System.out.println(ANSI_BLUE + "|              You've entered the JumpChat room.           |" + ANSI_RESET);
-							System.out.println(ANSI_BLUE + "|       Press /exit to exit or start sending messages!     |" + ANSI_RESET);
-							System.out.println(ANSI_YELLOW + "+ ======================================================== +" + ANSI_RESET);
+					} catch (IOException e) {
 
-							client.listenMessage();
-							client.sendMessage();
+						System.out.println(ANSI_YELLOW + "+ ======================================================== +" + ANSI_RESET);
+						System.out.println(ANSI_RED + "|          			  Invalid IP address.                  |" + ANSI_RESET);
+						System.out.println(ANSI_YELLOW + "+ ======================================================== +" + ANSI_RESET);
 
-						} catch (IOException e) {
-
-							System.out.println(ANSI_YELLOW + "+ ======================================================== +" + ANSI_RESET);
-							System.out.println(ANSI_RED + "|          			  Invalid IP address.                  |" + ANSI_RESET);
-							System.out.println(ANSI_YELLOW + "+ ======================================================== +" + ANSI_RESET);
-
-						}
 					}
-				}else{
+				}
+				else{
 					System.out.println(ANSI_YELLOW + "+ ======================================================== +" + ANSI_RESET);
 					System.out.println(ANSI_RED + "|          Authentication Failed. Please try again.        |" + ANSI_RESET);
 					System.out.println(ANSI_YELLOW + "+ ======================================================== +" + ANSI_RESET);
