@@ -1,5 +1,6 @@
 package com.cognixia.jump.GUI_Chat;
 
+import com.cognixia.jump.client.Client;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -103,7 +104,7 @@ public class SignUpGUI extends Application {
         }
 
         // Encrypt password
-        String encryptedPassword = LoginGUI.encoder(password);
+        String encryptedPassword = Client.encoder(password);
 
         try{
             Statement stmt = connection.createStatement();

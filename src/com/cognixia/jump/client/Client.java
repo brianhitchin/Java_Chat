@@ -59,13 +59,29 @@ public class Client  {
 					String[] parts = messageToSend.split(":", 2);
 					String recipient = parts[0].substring(1).trim();
 					String pm = parts[1].trim();
-					bufferedWriter.write("@" + recipient + ":" + pm);
+
+					String message = "@" + recipient + ":" + pm;
+
+					// Encrypt here
+					message = encoder(message);
+
+					bufferedWriter.write(message);
 
 				}else if(messageToSend.equals("/exit")){
 					closeEverything(socket, bufferedReader, bufferedWriter);
 					return;
+
+				}
+				else if(messageToSend.isEmpty() || messageToSend.isBlank()){
+					continue;
 				} else {
-					bufferedWriter.write(username + ": " + messageToSend); // Normal message
+
+					String message = username + ": " + messageToSend;
+
+					// Encrypt here
+					message = encoder(message);
+
+					bufferedWriter.write(message); // Normal message
 				}
 				bufferedWriter.newLine();
 				bufferedWriter.flush();
@@ -84,7 +100,14 @@ public class Client  {
 				while(socket.isConnected()) {
 					try {
 						msgFromGroupChat= bufferedReader.readLine();
-						System.out.println(msgFromGroupChat);
+
+						// Decrypt here
+						msgFromGroupChat = decoder(msgFromGroupChat);
+
+						if(msgFromGroupChat.startsWith("[Private]"))
+							System.out.println(ANSI_BLUE + msgFromGroupChat + ANSI_RESET);
+						else
+							System.out.println(msgFromGroupChat);
 					}catch(IOException e){
 
 						closeEverything(socket,bufferedReader,bufferedWriter);
@@ -176,29 +199,47 @@ public class Client  {
 
 	public static String encoder(String password){
 
+		if(password == null)
+			return null;
+
 		char[] encoded = password.toCharArray();
 		StringBuilder stringBuilder = new StringBuilder();
 
 
-		for(char c: encoded){
+		for (char c : encoded) {
+
+			if (c == ' ') {
+				stringBuilder.append(c);
+				continue;
+			}
+
 			c += 3;
 			stringBuilder.append(c);
 		}
 
 		return stringBuilder.toString();
+
 	}
 
 	public static String decoder(String password){
+
+		if(password == null)
+			return null;
 
 		char[] encoded = password.toCharArray();
 		StringBuilder stringBuilder = new StringBuilder();
 
 
-		for(char c: encoded){
+		for (char c : encoded) {
+
+			if (c == ' ') {
+				stringBuilder.append(c);
+				continue;
+			}
+
 			c -= 3;
 			stringBuilder.append(c);
 		}
-
 		return stringBuilder.toString();
 	}
 
@@ -364,7 +405,11 @@ public class Client  {
 						System.out.println(ANSI_YELLOW + "+ ======================================================== +" + ANSI_RESET);
 
 						// Read History from Logs
-						ClientHandler.ReadFromLogs(10);
+						String[] history = ClientHandler.ReadFromLogs(10);
+						if(history != null) {
+							for (String message : history)
+								System.out.println(message);
+						}
 
 						client.listenMessage();
 						client.sendMessage();

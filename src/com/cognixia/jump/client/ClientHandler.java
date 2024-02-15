@@ -39,36 +39,15 @@ public class ClientHandler implements Runnable{
             this.server = server;
             clientHandlers.add(this);
             Privateusername.put(clientUsername,this);
-            broadcastMessage("SERVER: " + clientUsername + " has entered the chat!");
-            writeToLogs("SERVER: " + clientUsername + " has entered the chat!**");
+            broadcastMessage(Client.encoder("SERVER: " + clientUsername + " has entered the chat!"));
+            writeToLogs(Client.encoder("SERVER: " + clientUsername + " has entered the chat!**"));
         }
         catch (IOException e) {
             closeEverything(socket, bufferedReader, bufferedWriter);
         }
     }
 
-    public void sendPrivateMessage(String recipient, String msg) {
 
-        ClientHandler privateHandler = Privateusername.get(recipient);
-        if (privateHandler != null) {
-        	
-            try {
-            	privateHandler.bufferedWriter.write(clientUsername + "(private): " + msg);
-            	privateHandler.bufferedWriter.newLine();
-            	privateHandler.bufferedWriter.flush();
-            } catch (IOException e) {
-                System.err.println("Error sending Private message");
-            }
-        } else {
-            try {
-                bufferedWriter.write("SERVER: Private message to " + recipient + " failed. User not found.");
-                bufferedWriter.newLine();
-                bufferedWriter.flush();
-            } catch (IOException e) {
-                System.err.println("Error sending Private message");
-            }
-        }
-    }
 
     @Override
     public void run() {
@@ -76,7 +55,12 @@ public class ClientHandler implements Runnable{
        
             String messageFromClient;
             while (socket.isConnected()) {
+
                 messageFromClient = bufferedReader.readLine();
+
+                // decrypt here
+                messageFromClient = Client.decoder(messageFromClient);
+
                 if (messageFromClient == null) {
                     break; // Connection closed by client
                 }
@@ -86,14 +70,16 @@ public class ClientHandler implements Runnable{
                     String recipient = parts[0].substring(1).trim();
                     String message = parts[1].trim();
                     sendPrivateMessage(recipient, message);
-   
-                
-                
                 }
                 
                 else {
-                broadcastMessage(messageFromClient);
-                writeToLogs(messageFromClient);}
+
+                    // encrypt again
+                    messageFromClient = Client.encoder(messageFromClient);
+
+                    broadcastMessage(messageFromClient);
+                    writeToLogs(messageFromClient);
+                }
             }
         } catch (IOException e) {
             // Exception occurred, close everything
@@ -105,6 +91,29 @@ public class ClientHandler implements Runnable{
                 removeClientHandler();
             } catch (UnknownHostException e) {
                 System.err.println("Error Removing client handler");
+            }
+        }
+    }
+
+    public void sendPrivateMessage(String recipient, String msg) {
+
+        ClientHandler privateHandler = Privateusername.get(recipient);
+        if (privateHandler != null) {
+
+            try {
+                privateHandler.bufferedWriter.write(Client.encoder("[Private] " + clientUsername + ": " + msg));
+                privateHandler.bufferedWriter.newLine();
+                privateHandler.bufferedWriter.flush();
+            } catch (IOException e) {
+                System.err.println("Error sending Private message");
+            }
+        } else {
+            try {
+                bufferedWriter.write(Client.encoder("SERVER: Private message to " + recipient + " failed. User not found."));
+                bufferedWriter.newLine();
+                bufferedWriter.flush();
+            } catch (IOException e) {
+                System.err.println("Error sending Private message");
             }
         }
     }
@@ -128,8 +137,8 @@ public class ClientHandler implements Runnable{
 
         clientHandlers.remove(this);
 
-        broadcastMessage("SERVER: " + clientUsername + " has left the chat!");
-        writeToLogs("SERVER: " + clientUsername + " has left the chat!**");
+        broadcastMessage(Client.encoder("SERVER: " + clientUsername + " has left the chat!"));
+        writeToLogs(Client.encoder("SERVER: " + clientUsername + " has left the chat!**"));
 
     }
 
@@ -152,6 +161,7 @@ public class ClientHandler implements Runnable{
         }
     }
 
+    // Takes in already encrypted msgs and writes them to JumpChatLogs.txt
     public static void writeToLogs(String msg) {
 
         File file = new File("JumpChatLogs.txt");
@@ -167,16 +177,7 @@ public class ClientHandler implements Runnable{
                 }
             }
 
-//             Encryption
-            char[] encoded = msg.toCharArray();
-
-            for(char c: encoded){
-                c += 34;
-                fileWriter.write(c);
-            }
-
-
-
+            fileWriter.write(msg);
             fileWriter.write("\n");
         }
         catch (IOException e){
@@ -184,14 +185,15 @@ public class ClientHandler implements Runnable{
         }
     }
 
-    public static void ReadFromLogs(int lastLines) {
+    // Uses Client.decoder to decrypt files
+    public static String[] ReadFromLogs(int lastLines) {
 
         File file = new File("JumpChatLogs.txt");
 
         if(!file.exists()){
 
             // Log file does not exist
-            return;
+            return null;
         }
 
         try{
@@ -238,31 +240,20 @@ public class ClientHandler implements Runnable{
                 counter++;
             }
 
-            // Decrypt Message from logs
-            for (String message : sorted) {
+            String[] history = new String[lastLines];
 
-                if(message == null){
+            // Decrypt Message from logs
+            for(int i = 0; i < sorted.length; i++){
+
+                if(sorted[i] == null){
                     break;
                 }
 
-                char[] encoded = message.toCharArray();
-                StringBuilder stringBuilder = new StringBuilder();
-
-                for (char c : encoded) {
-                    c -= 34;
-                    stringBuilder.append(c);
-                }
-
-                // Print sb
-                System.out.println(stringBuilder);
-
-                //clear sb
-                stringBuilder.delete(0, stringBuilder.length());
-
-
+                history[i] = Client.decoder(sorted[i]);
 
             }
 
+            return history;
 
         } catch (IOException e) {
             throw new RuntimeException(e);

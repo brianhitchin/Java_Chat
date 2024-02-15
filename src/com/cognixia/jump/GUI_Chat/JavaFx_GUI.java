@@ -3,6 +3,7 @@ package com.cognixia.jump.GUI_Chat;
 import java.io.IOException;
 import java.net.Socket;
 
+import com.cognixia.jump.client.ClientHandler;
 import javafx.application.Application;
 import com.cognixia.jump.client.Client;
 
@@ -25,14 +26,15 @@ public class JavaFx_GUI extends Application {
     private final Socket socket;
     private final String username;
 
+    private final Stage loginStage;
+
     // Constructor
-    public JavaFx_GUI(Socket socket, String username, Client client) {
+    public JavaFx_GUI(Socket socket, String username, Client client, Stage loginStage) {
+
         this.socket = socket;
         this.username = username;
-
         this.client = client;
-//        bufferedReader = client.getBufferedReader();
-//        bufferedWriter = client.getBufferedWriter();
+        this.loginStage = loginStage;
     }
 
     @Override
@@ -42,8 +44,12 @@ public class JavaFx_GUI extends Application {
 
         // Chat area ----------------------------------------
         chatArea = new TextArea();
+        chatArea.setStyle("-fx-font-size: 1.3em;");
         chatArea.setEditable(false);
         root.setCenter(chatArea);
+
+        // Load History
+        loadHistory(10);
 
         // Message input area
         VBox messageInputArea = new VBox();
@@ -74,9 +80,21 @@ public class JavaFx_GUI extends Application {
         primaryStage.show();
     }
 
+    private void loadHistory(int loadLastLines){
+
+        String[] history = ClientHandler.ReadFromLogs(loadLastLines);
+        if(history != null){
+            for(String message : history){
+                chatArea.appendText(message + "\n");
+            }
+        }
+
+    }
+
     private void exitButton(Stage primaryStage){
         primaryStage.close();
         client.closeEverything(socket, client.getBufferedReader(), client.getBufferedWriter());
+        loginStage.show();
     }
 
     private void closeApp(WindowEvent event) {
@@ -86,8 +104,10 @@ public class JavaFx_GUI extends Application {
     }
 
     private void sendMessageGUI() {
+
         String message = messageField.getText();
-        if (!message.isEmpty()) {
+
+        if (!message.isEmpty() && !message.isBlank()) {
 
             // Send message using the client
             sendMessage(message);
@@ -110,12 +130,20 @@ public class JavaFx_GUI extends Application {
                     String[] parts = msg.split(":", 2);
                     String recipient = parts[0].substring(1).trim();
                     String pm = parts[1].trim();
-                    client.getBufferedWriter().write("@" + recipient + ":" + pm);
 
+                    // Encrypt here
+                    String message = "@" + recipient + ":" + pm;
+                    message = Client.encoder(message);
 
+                    client.getBufferedWriter().write(message);
                 }
                 else {
-                    client.getBufferedWriter().write(username + ": " + msg); // Normal message
+
+                    // Encrypt here
+                    String message = username + ": " + msg;
+                    message = Client.encoder(message);
+
+                    client.getBufferedWriter().write(message); // Normal message
                 }
                 client.getBufferedWriter().newLine();
                 client.getBufferedWriter().flush();
@@ -149,6 +177,10 @@ public class JavaFx_GUI extends Application {
                     try {
 
                         msgFromGroupChat = client.getBufferedReader().readLine();
+
+                        // Decrypt here
+                        msgFromGroupChat = Client.decoder(msgFromGroupChat);
+
                         chatArea.appendText(msgFromGroupChat + "\n");
 
                     }catch(IOException ignored){
@@ -158,4 +190,5 @@ public class JavaFx_GUI extends Application {
             }
         }).start();
     }
+
 }
