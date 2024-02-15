@@ -12,7 +12,7 @@ import com.cognixia.jump.client.ClientHandler;
 
 public class Server {
 
-	private ServerSocket serverSocket;
+	private final ServerSocket serverSocket;
 	
 	public static final String ANSI_RESET = "\u001B[0m";
 	public static final String ANSI_YELLOW = "\u001B[33m";
@@ -44,7 +44,7 @@ public class Server {
 
 		} catch (IOException e) {
 
-			e.printStackTrace();
+			System.err.println("Error starting the server");
 			closeServerSocket();
 		}
 
@@ -69,8 +69,7 @@ public class Server {
 
 		} catch (IOException e) {
 
-
-			e.printStackTrace();
+			System.err.println("Error shutting down Jump Chat Server");
 
 		}
 

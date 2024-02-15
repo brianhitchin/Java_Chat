@@ -98,7 +98,7 @@ public class LoginGUI extends Application {
         String IPserver = IPField.getText();
 
         // Perform authentication, socket connection, etc.
-        String encryptedPass = encoder(password);
+        String encryptedPass = Client.encoder(password);
 
         if(authenticate(username, encryptedPass, connection)){
 
@@ -111,7 +111,7 @@ public class LoginGUI extends Application {
                 Socket socket = new Socket(IPserver, 1234);
                 Client client = new Client(socket, username);
 
-                JavaFx_GUI chatGUI = new JavaFx_GUI(socket, username, client);
+                JavaFx_GUI chatGUI = new JavaFx_GUI(socket, username, client, primaryStage);
 
                 chatGUI.start(new Stage());
 
@@ -171,19 +171,6 @@ public class LoginGUI extends Application {
         stage.hide();
     }
 
-    public static String encoder(String password){
-
-        char[] encoded = password.toCharArray();
-        StringBuilder stringBuilder = new StringBuilder();
-
-
-        for(char c: encoded){
-            c += 3;
-            stringBuilder.append(c);
-        }
-
-        return stringBuilder.toString();
-    }
     public static void main(String[] args) {
         launch(args);
     }
